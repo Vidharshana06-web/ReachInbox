@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.js';
-import { Mail, LogOut, Loader2, ExternalLink, LayoutDashboard, Layers, Menu, Zap, Settings } from 'lucide-react';
-
+import { Mail, LogOut, Loader2, LayoutDashboard, Layers, Menu, Zap, Settings } from 'lucide-react';
 export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
@@ -87,23 +86,21 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
 
       {/* Main Layout Body wrapper */}
       <div className="flex-1 flex pt-16 relative overflow-hidden">
-        
+
         {/* Permanent Sidebar (Desktop) / Collapsible Sidebar Drawer (Mobile) */}
         <aside
-          className={`fixed md:static top-16 bottom-0 left-0 z-35 w-64 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ease-in-out transform md:translate-x-0 md:ml-0 ${
-            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
+          className={`fixed md:static top-16 bottom-0 left-0 z-35 w-64 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ease-in-out transform md:translate-x-0 md:ml-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
         >
           {/* Navigation Items */}
           <nav className="flex-1 p-4 space-y-1.5">
             <Link
               to="/dashboard"
               onClick={() => setIsSidebarOpen(false)} // close drawer on mobile when clicking links
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                isDashboardActive
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${isDashboardActive
                   ? 'bg-indigo-50 text-indigo-700'
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-              }`}
+                }`}
             >
               <LayoutDashboard className="w-4 h-4" />
               <span>Dashboard</span>
@@ -112,11 +109,10 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
             <Link
               to="/jobs"
               onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                isJobsActive
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${isJobsActive
                   ? 'bg-indigo-50 text-indigo-700'
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-              }`}
+                }`}
             >
               <Layers className="w-4 h-4" />
               <span>Jobs</span>
@@ -125,11 +121,10 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
             <Link
               to="/queues"
               onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                isQueuesActive
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${isQueuesActive
                   ? 'bg-indigo-50 text-indigo-700'
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-              }`}
+                }`}
             >
               <Mail className="w-4 h-4" />
               <span>Queue Board</span>
@@ -138,11 +133,10 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
             <Link
               to="/settings"
               onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                isSettingsActive
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${isSettingsActive
                   ? 'bg-indigo-50 text-indigo-700'
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-              }`}
+                }`}
             >
               <Settings className="w-4 h-4" />
               <span>Settings</span>

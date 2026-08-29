@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { campaignsAPI, emailsAPI } from '../services/api.js';
 import { EmailCampaign, ScheduledEmail, EmailSender } from '../types/index.js';
-import { 
-  Loader2, AlertCircle, Mail, Calendar, Clock, 
+import {
+  Loader2, AlertCircle, Mail, Calendar, Clock,
   Send, RefreshCw, Eye, CornerDownRight, X, User, LayoutDashboard, Layers, ChevronRight, Trash2
 } from 'lucide-react';
 
@@ -15,7 +15,7 @@ interface CampaignWithRelations extends EmailCampaign {
 export const JobsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+
   const [campaigns, setCampaigns] = useState<EmailCampaign[]>([]);
   const [campaignsLoading, setCampaignsLoading] = useState(true);
   const [campaignsError, setCampaignsError] = useState<string | null>(null);
@@ -178,28 +178,26 @@ export const JobsPage: React.FC = () => {
                   <div
                     key={c.id}
                     onClick={() => navigate(`/jobs/${c.id}`)}
-                    className={`p-3.5 rounded-xl border text-xs cursor-pointer transition-all flex items-start justify-between gap-3 ${
-                      isActive
-                        ? 'bg-indigo-50 border-indigo-200 text-indigo-900 shadow-sm shadow-indigo-100/50'
-                        : 'border-slate-100 bg-white hover:bg-slate-50/70 text-slate-700 hover:border-slate-200'
-                    }`}
+                    className={`p-3.5 rounded-xl border text-xs cursor-pointer transition-all flex items-start justify-between gap-3 ${isActive
+                      ? 'bg-indigo-50 border-indigo-200 text-indigo-900 shadow-sm shadow-indigo-100/50'
+                      : 'border-slate-100 bg-white hover:bg-slate-50/70 text-slate-700 hover:border-slate-200'
+                      }`}
                   >
                     <div className="min-w-0 space-y-1">
                       <p className="font-bold truncate text-slate-900 leading-snug">{c.subject}</p>
                       <p className="text-[10px] text-slate-500 font-mono truncate">
-                        Sender: {c.sender?.name || 'N/A'}
+                        Sender: {c.senderId || 'N/A'}
                       </p>
                       <div className="flex items-center gap-2 pt-1">
                         <span className="text-[9px] font-mono text-slate-400">
                           {new Date(c.createdAt).toLocaleDateString()}
                         </span>
-                        <span className={`inline-block px-1.5 py-0.25 rounded text-[8px] font-extrabold ${
-                          c.status === 'SCHEDULED' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                        <span className={`inline-block px-1.5 py-0.25 rounded text-[8px] font-extrabold ${c.status === 'SCHEDULED' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
                           c.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                          c.status === 'IN_PROGRESS' ? 'bg-blue-50 text-blue-700 border border-blue-200 animate-pulse' :
-                          c.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600 border border-slate-200' :
-                          'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                        }`}>
+                            c.status === 'IN_PROGRESS' ? 'bg-blue-50 text-blue-700 border border-blue-200 animate-pulse' :
+                              c.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600 border border-slate-200' :
+                                'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                          }`}>
                           {c.status}
                         </span>
                       </div>
@@ -241,13 +239,12 @@ export const JobsPage: React.FC = () => {
                 <div className="space-y-1">
                   <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                     <span className="truncate max-w-[400px]" title={campaign.subject}>{campaign.subject}</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border shrink-0 ${
-                      campaign.status === 'SCHEDULED' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border shrink-0 ${campaign.status === 'SCHEDULED' ? 'bg-amber-50 text-amber-700 border-amber-200' :
                       campaign.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                      campaign.status === 'IN_PROGRESS' ? 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse' :
-                      campaign.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600 border-slate-200' :
-                      'bg-indigo-50 text-indigo-700 border-indigo-200'
-                    }`}>
+                        campaign.status === 'IN_PROGRESS' ? 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse' :
+                          campaign.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600 border-slate-200' :
+                            'bg-indigo-50 text-indigo-700 border-indigo-200'
+                      }`}>
                       {campaign.status}
                     </span>
                   </h3>
@@ -281,7 +278,7 @@ export const JobsPage: React.FC = () => {
 
               {/* Sub-grid: sidebar-stacked parameters and table data */}
               <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
-                
+
                 {/* Parameters Stack (Sidebar style inside page) */}
                 <div className="xl:col-span-1 space-y-5">
                   {/* Campaign configuration details */}
@@ -289,7 +286,7 @@ export const JobsPage: React.FC = () => {
                     <h4 className="font-bold text-[10px] text-slate-400 uppercase tracking-wider pb-1 border-b border-slate-100">
                       Job Config
                     </h4>
-                    
+
                     <div className="space-y-3 text-slate-700">
                       <div>
                         <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Sender account</span>
@@ -359,7 +356,7 @@ export const JobsPage: React.FC = () => {
 
                 {/* Recipients grids and inspectors layout */}
                 <div className={`xl:col-span-3 grid grid-cols-1 ${selectedEmail ? '2xl:grid-cols-5' : ''} gap-5 items-start`}>
-                  
+
                   {/* Table area */}
                   <div className={`border border-slate-200 rounded-xl overflow-hidden bg-white ${selectedEmail ? '2xl:col-span-3' : 'w-full'}`}>
                     <div className="p-3 bg-slate-50 border-b border-slate-200 font-bold text-xs text-slate-550 uppercase tracking-wider">
@@ -384,25 +381,23 @@ export const JobsPage: React.FC = () => {
                             {emails.map((emailItem) => {
                               const isSelected = selectedEmail?.id === emailItem.id;
                               return (
-                                <tr 
-                                  key={emailItem.id} 
+                                <tr
+                                  key={emailItem.id}
                                   onClick={() => setSelectedEmail(emailItem)}
-                                  className={`border-b border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer ${
-                                    isSelected ? 'bg-indigo-50 border-l-2 border-l-indigo-600' : ''
-                                  }`}
+                                  className={`border-b border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer ${isSelected ? 'bg-indigo-50 border-l-2 border-l-indigo-600' : ''
+                                    }`}
                                 >
                                   <td className="py-3 px-3 font-semibold text-slate-800 truncate max-w-[130px]" title={emailItem.recipient}>
                                     {emailItem.recipient}
                                   </td>
                                   <td className="py-3 px-3">
-                                    <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                                      emailItem.status === 'SENT' ? 'bg-emerald-50 text-emerald-700 border border-emerald-250' :
+                                    <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold ${emailItem.status === 'SENT' ? 'bg-emerald-50 text-emerald-700 border border-emerald-250' :
                                       emailItem.status === 'FAILED' ? 'bg-rose-50 text-rose-700 border border-rose-250' :
-                                      emailItem.status === 'RATE_LIMITED' ? 'bg-purple-55 border border-purple-200 text-purple-700' :
-                                      emailItem.status === 'PROCESSING' ? 'bg-indigo-55 border border-indigo-200 text-indigo-700 animate-pulse' :
-                                      emailItem.status === 'CANCELLED' ? 'bg-slate-100 text-slate-655 border border-slate-200' :
-                                      'bg-amber-55 text-amber-700 border border-amber-250'
-                                    }`}>
+                                        emailItem.status === 'RATE_LIMITED' ? 'bg-purple-55 border border-purple-200 text-purple-700' :
+                                          emailItem.status === 'PROCESSING' ? 'bg-indigo-55 border border-indigo-200 text-indigo-700 animate-pulse' :
+                                            emailItem.status === 'CANCELLED' ? 'bg-slate-100 text-slate-655 border border-slate-200' :
+                                              'bg-amber-55 text-amber-700 border border-amber-250'
+                                      }`}>
                                       {emailItem.status}
                                     </span>
                                   </td>
@@ -443,7 +438,7 @@ export const JobsPage: React.FC = () => {
                             Recipient Details
                           </h5>
                         </div>
-                        <button 
+                        <button
                           onClick={() => setSelectedEmail(null)}
                           className="p-1 rounded text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-all cursor-pointer"
                         >
@@ -462,7 +457,7 @@ export const JobsPage: React.FC = () => {
                             <span className="mt-0.5">Created</span>
                           </div>
                           <span className="text-slate-300">→</span>
-                          
+
                           {selectedEmail.status === 'CANCELLED' ? (
                             <div className="flex flex-col items-center text-slate-400">
                               <div className="w-3.5 h-3.5 rounded-full bg-slate-300 text-white flex items-center justify-center text-[7px]">!</div>
@@ -485,18 +480,16 @@ export const JobsPage: React.FC = () => {
                                 </>
                               ) : (
                                 <>
-                                  <div className={`flex flex-col items-center ${
-                                    selectedEmail.status === 'SENT' || selectedEmail.status === 'FAILED' ? 'text-emerald-600' : 'text-indigo-650'
-                                  }`}>
-                                    <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] ${
-                                      selectedEmail.status === 'SENT' || selectedEmail.status === 'FAILED' ? 'bg-emerald-500 text-white' : 'bg-indigo-500 text-white animate-pulse'
+                                  <div className={`flex flex-col items-center ${selectedEmail.status === 'SENT' || selectedEmail.status === 'FAILED' ? 'text-emerald-600' : 'text-indigo-650'
                                     }`}>
+                                    <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] ${selectedEmail.status === 'SENT' || selectedEmail.status === 'FAILED' ? 'bg-emerald-500 text-white' : 'bg-indigo-500 text-white animate-pulse'
+                                      }`}>
                                       {selectedEmail.status === 'SENT' || selectedEmail.status === 'FAILED' ? '✓' : '•'}
                                     </div>
                                     <span className="mt-0.5">Process</span>
                                   </div>
                                   <span className="text-slate-300">→</span>
-                                  
+
                                   {selectedEmail.status === 'SENT' ? (
                                     <div className="flex flex-col items-center text-emerald-600">
                                       <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[7px]">✓</div>
