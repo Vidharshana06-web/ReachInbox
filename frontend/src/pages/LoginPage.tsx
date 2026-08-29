@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.js';
-import { Mail, Loader2, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight, Zap } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const { loginWithGoogle, refreshUser, user } = useAuth();
@@ -39,44 +39,47 @@ export const LoginPage: React.FC = () => {
   }, [user, navigate, loggingIn]);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
-      {/* Decorative Blur Backgrounds */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-indigo-500/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 rounded-full bg-purple-500/10 blur-[120px] pointer-events-none" />
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-indigo-50/20 to-slate-100">
+      {/* Decorative High-opacity Blur Backgrounds for rich color blobs */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-tr from-blue-500/20 to-indigo-500/20 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-pink-500/15 to-purple-500/15 blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-indigo-500/10 blur-[130px] pointer-events-none" />
 
       <div className="relative w-full max-w-md px-6">
         {/* Glassmorphic Panel Card */}
-        <div className="glass-panel p-8 rounded-2xl shadow-2xl relative">
-          <div className="flex flex-col items-center mb-8">
-            {/* Branding Logo */}
-            <div className="w-14 h-14 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30 mb-4 ring-1 ring-white/10">
-              <Mail className="w-7 h-7 text-white" />
+        <div className="glass-panel p-8 rounded-2xl shadow-xl border border-slate-200/80 bg-white relative animate-in fade-in zoom-in-95 duration-500">
+          <div className="flex flex-col items-center mb-6">
+            {/* Unique Gradient Logo Container */}
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-650 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 mb-4">
+              <Zap className="w-6.5 h-6.5 text-white animate-pulse" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white mb-1">
+            
+            {/* Rich color text gradient branding */}
+            <h1 className="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-655 mb-1 animate-pulse">
               ReachInbox
             </h1>
-            <p className="text-sm text-slate-400">
-              Full-Stack Email Job Scheduler
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
+              Email Job Scheduler
             </p>
           </div>
 
           {errorMsg && (
-            <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-200 text-xs leading-relaxed">
+            <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs leading-relaxed font-semibold">
               {errorMsg}
             </div>
           )}
 
           {loggingIn ? (
-            <div className="flex flex-col items-center justify-center py-6 text-slate-300">
+            <div className="flex flex-col items-center justify-center py-6 text-slate-600">
               <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-3" />
-              <p className="text-sm font-medium">Synchronizing with Google...</p>
-              <p className="text-xs text-slate-500 mt-1">Authenticating session token</p>
+              <p className="text-sm font-bold">Synchronizing with Google...</p>
+              <p className="text-xs text-slate-400 mt-1 font-medium">Authenticating session token</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <button
                 onClick={loginWithGoogle}
-                className="w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-xl bg-white text-slate-900 font-semibold text-sm transition-all hover:bg-slate-50 active:scale-[0.98] shadow-md shadow-white/5 cursor-pointer"
+                className="w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-xl bg-white text-slate-900 border border-slate-200 font-bold text-sm transition-all hover:bg-slate-50 hover:border-indigo-300 hover:shadow-md hover:shadow-indigo-500/5 active:scale-[0.98] cursor-pointer"
               >
                 {/* SVG Google Icon */}
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -100,10 +103,10 @@ export const LoginPage: React.FC = () => {
                 <span>Continue with Google</span>
               </button>
 
-              <div className="flex items-center justify-between pt-4 border-t border-slate-800 text-xs text-slate-500">
+              <div className="flex items-center justify-between pt-4 border-t border-slate-100 text-[10px] font-bold text-slate-450 uppercase tracking-wider">
                 <span>Production Mode</span>
                 <span className="flex items-center gap-1">
-                  Vite + Tailwind <ArrowRight className="w-3 h-3" />
+                  Vite + Tailwind <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                 </span>
               </div>
             </div>

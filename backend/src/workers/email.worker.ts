@@ -106,6 +106,8 @@ export function startEmailWorker() {
         );
         const delayMs = nextHour.getTime() - now.getTime();
 
+        const nextJobId = `${emailId}:resched:${nextHour.getTime()}`;
+
         // Update email status back to RATE_LIMITED and schedule time
         await prisma.scheduledEmail.update({
           where: { id: emailId },
@@ -115,8 +117,8 @@ export function startEmailWorker() {
           },
         });
 
-        // Reschedule job in BullMQ
-        await addEmailToQueue(emailId, delayMs);
+        // Reschedule job in BullMQ with unique deterministic jobId
+        await addEmailToQueue(emailId, delayMs, nextJobId);
 
         // Slack notification logic (prevent duplicate alerts in same hour)
         if (email.user.slackAccessToken && email.user.slackChannelId) {

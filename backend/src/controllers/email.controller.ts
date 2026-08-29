@@ -205,7 +205,11 @@ export async function cancelEmail(req: AuthRequest, res: Response) {
 
     // Try to remove from BullMQ
     try {
-      const job = await emailQueue.getJob(email.id);
+      let job = await emailQueue.getJob(email.id);
+      if (!job) {
+        const reschedJobId = `${email.id}:resched:${new Date(email.scheduledAt).getTime()}`;
+        job = await emailQueue.getJob(reschedJobId);
+      }
       if (job) {
         await job.remove();
       }
@@ -223,5 +227,270 @@ export async function cancelEmail(req: AuthRequest, res: Response) {
   } catch (error: any) {
     console.error('Error cancelling email:', error);
     return res.status(500).json({ error: 'Failed to cancel email schedule.' });
+  }
+}
+
+export async function getCampaignById(req: AuthRequest, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { id } = req.params;
+
+  try {
+    const campaign = await prisma.emailCampaign.findFirst({
+      where: { id, userId },
+      include: {
+        sender: true,
+        scheduledEmails: {
+          include: { sender: true },
+          orderBy: { scheduledAt: 'asc' },
+        },
+      },
+    });
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+
+    const resolvedStatus = resolveCampaignStatusInternal(campaign.status, campaign.scheduledEmails);
+    const campaignWithResolvedStatus = {
+      ...campaign,
+      status: resolvedStatus,
+    };
+
+    return res.json({ campaign: campaignWithResolvedStatus });
+  } catch (error: any) {
+    console.error('Error fetching campaign details:', error);
+    return res.status(500).json({ error: 'Failed to fetch campaign details' });
+  }
+}
+
+export async function getCampaigns(req: AuthRequest, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const campaigns = await prisma.emailCampaign.findMany({
+      where: { userId },
+      include: { 
+        sender: true,
+        scheduledEmails: {
+          select: { status: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const campaignsWithResolvedStatus = campaigns.map(c => {
+      const resolvedStatus = resolveCampaignStatusInternal(c.status, c.scheduledEmails);
+      return {
+        ...c,
+        status: resolvedStatus,
+      };
+    });
+
+    return res.json({ campaigns: campaignsWithResolvedStatus });
+  } catch (error: any) {
+    console.error('Error fetching campaigns list:', error);
+    return res.status(500).json({ error: 'Failed to fetch campaigns.' });
+  }
+}
+
+export async function deleteCampaign(req: AuthRequest, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { id } = req.params;
+
+  try {
+    const campaign = await prisma.emailCampaign.findFirst({
+      where: { id, userId },
+      include: { scheduledEmails: true },
+    });
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found or unauthorized' });
+    }
+
+    // Cancel all scheduled BullMQ jobs
+    for (const email of campaign.scheduledEmails) {
+      if (email.status === 'SCHEDULED' || email.status === 'RATE_LIMITED') {
+        try {
+          let job = await emailQueue.getJob(email.id);
+          if (!job) {
+            const reschedJobId = `${email.id}:resched:${new Date(email.scheduledAt).getTime()}`;
+            job = await emailQueue.getJob(reschedJobId);
+          }
+          if (job) {
+            await job.remove();
+          }
+        } catch (queueErr) {
+          console.warn(`Could not remove job ${email.id} from queue during campaign delete:`, queueErr);
+        }
+      }
+    }
+
+    // Delete campaign (will cascade delete scheduled emails in database)
+    await prisma.emailCampaign.delete({
+      where: { id },
+    });
+
+    return res.json({ success: true, message: 'Campaign and associated scheduled emails deleted successfully.' });
+  } catch (error: any) {
+    console.error('Error deleting campaign:', error);
+    return res.status(500).json({ error: 'Failed to delete campaign.' });
+  }
+}
+
+function resolveCampaignStatusInternal(dbStatus: string, scheduledEmails: { status: string }[] = []) {
+  if (scheduledEmails.length === 0) return dbStatus;
+
+  const total = scheduledEmails.length;
+  const sent = scheduledEmails.filter(e => e.status === 'SENT').length;
+  const cancelled = scheduledEmails.filter(e => e.status === 'CANCELLED').length;
+  const failed = scheduledEmails.filter(e => e.status === 'FAILED').length;
+  const processing = scheduledEmails.filter(e => e.status === 'PROCESSING').length;
+  const rateLimited = scheduledEmails.filter(e => e.status === 'RATE_LIMITED').length;
+
+  if (sent === total) {
+    return 'COMPLETED';
+  }
+
+  if (cancelled === total) {
+    return 'CANCELLED';
+  }
+
+  if (sent + failed + cancelled === total) {
+    return 'COMPLETED';
+  }
+
+  if (processing > 0 || rateLimited > 0 || (sent + failed > 0)) {
+    return 'IN_PROGRESS';
+  }
+
+  return 'SCHEDULED';
+}
+
+export async function getQueueStatus(req: AuthRequest, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const counts = await emailQueue.getJobCounts();
+    
+    // Get the 50 most recent jobs across typical states
+    const rawJobs = await emailQueue.getJobs(['active', 'waiting', 'delayed', 'failed', 'completed'], 0, 49, true);
+
+    const jobs = await Promise.all(
+      rawJobs.map(async (job) => {
+        const state = await job.getState();
+        const emailId = job.data?.emailId;
+
+        // Fetch corresponding email and campaign details from database if emailId exists
+        let emailInfo = null;
+        if (emailId) {
+          try {
+            emailInfo = await prisma.scheduledEmail.findUnique({
+              where: { id: emailId },
+              select: {
+                recipient: true,
+                subject: true,
+                status: true,
+                campaign: {
+                  select: {
+                    subject: true,
+                  }
+                },
+                sender: {
+                  select: {
+                    name: true,
+                    email: true,
+                  }
+                }
+              }
+            });
+          } catch (dbErr) {
+            // ignore
+          }
+        }
+
+        return {
+          id: job.id,
+          name: job.name,
+          state,
+          timestamp: job.timestamp,
+          processedOn: job.processedOn,
+          finishedOn: job.finishedOn,
+          attemptsMade: job.attemptsMade,
+          failedReason: job.failedReason,
+          delay: job.opts?.delay || 0,
+          emailInfo,
+        };
+      })
+    );
+
+    return res.json({ counts, jobs });
+  } catch (error: any) {
+    console.error('Error fetching queue status:', error);
+    return res.status(500).json({ error: 'Failed to fetch queue status.' });
+  }
+}
+
+export async function retryQueueJob(req: AuthRequest, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { id } = req.params;
+
+  try {
+    const job = await emailQueue.getJob(id);
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found in queue' });
+    }
+
+    await job.retry();
+    return res.json({ success: true, message: 'Job retry scheduled successfully.' });
+  } catch (error: any) {
+    console.error('Error retrying job:', error);
+    return res.status(500).json({ error: 'Failed to retry job.' });
+  }
+}
+
+export async function removeQueueJob(req: AuthRequest, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { id } = req.params;
+
+  try {
+    const job = await emailQueue.getJob(id);
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found in queue' });
+    }
+
+    await job.remove();
+    return res.json({ success: true, message: 'Job removed from queue successfully.' });
+  } catch (error: any) {
+    console.error('Error removing job:', error);
+    return res.status(500).json({ error: 'Failed to remove job.' });
+  }
+}
+
+export async function cleanQueue(req: AuthRequest, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { status } = req.body;
+
+  if (!['completed', 'failed'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid clean status' });
+  }
+
+  try {
+    const jobs = await emailQueue.clean(0, 1000, status);
+    return res.json({ success: true, message: `Cleaned ${jobs.length} jobs with status ${status}.` });
+  } catch (error: any) {
+    console.error('Error cleaning queue:', error);
+    return res.status(500).json({ error: 'Failed to clean queue.' });
   }
 }

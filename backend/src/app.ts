@@ -41,8 +41,15 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Queue visualizer dashboard
-app.use('/admin/queues', serverAdapter.getRouter());
+// Queue visualizer dashboard with automatic trailing slash redirection
+app.use('/admin/queues', (req, res, next) => {
+  if (req.path === '' || req.path === '/') {
+    if (!req.originalUrl.endsWith('/')) {
+      return res.redirect(301, req.originalUrl + '/');
+    }
+  }
+  next();
+}, serverAdapter.getRouter());
 
 // REST APIs mount
 app.use('/api', apiRouter);

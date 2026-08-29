@@ -16,7 +16,14 @@ import {
   getScheduledEmails,
   getSentEmails,
   getEmailById,
-  cancelEmail
+  cancelEmail,
+  getCampaignById,
+  getCampaigns,
+  deleteCampaign,
+  getQueueStatus,
+  retryQueueJob,
+  removeQueueJob,
+  cleanQueue
 } from '../controllers/email.controller.js';
 import {
   connectSlack,
@@ -48,6 +55,9 @@ router.get('/emails/scheduled', authMiddleware as any, getScheduledEmails as any
 router.get('/emails/sent', authMiddleware as any, getSentEmails as any);
 router.get('/emails/:id', authMiddleware as any, getEmailById as any);
 router.post('/emails/:id/cancel', authMiddleware as any, cancelEmail as any);
+router.get('/campaigns', authMiddleware as any, getCampaigns as any);
+router.get('/campaigns/:id', authMiddleware as any, getCampaignById as any);
+router.delete('/campaigns/:id', authMiddleware as any, deleteCampaign as any);
 
 // Search Route
 router.get('/search/emails', authMiddleware as any, searchEmails as any);
@@ -57,5 +67,11 @@ router.get('/slack/connect', authMiddleware as any, connectSlack as any);
 router.get('/slack/callback', handleSlackCallback as any);
 router.get('/slack/status', authMiddleware as any, getSlackStatus as any);
 router.post('/slack/disconnect', authMiddleware as any, disconnectSlack as any);
+
+// Queue Management Routes
+router.get('/queues', authMiddleware as any, getQueueStatus as any);
+router.post('/queues/retry/:id', authMiddleware as any, retryQueueJob as any);
+router.post('/queues/remove/:id', authMiddleware as any, removeQueueJob as any);
+router.post('/queues/clean', authMiddleware as any, cleanQueue as any);
 
 export default router;

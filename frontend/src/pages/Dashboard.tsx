@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { sendersAPI, emailsAPI, slackAPI, searchAPI } from '../services/api.js';
 import { EmailSender, ScheduledEmail, SlackStatus } from '../types/index.js';
 import { SendersManager } from '../components/SendersManager.js';
@@ -13,6 +14,7 @@ import {
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [senders, setSenders] = useState<EmailSender[]>([]);
   const [scheduledEmails, setScheduledEmails] = useState<ScheduledEmail[]>([]);
   const [sentEmails, setSentEmails] = useState<ScheduledEmail[]>([]);
@@ -177,46 +179,46 @@ export const DashboardPage: React.FC = () => {
       {/* Top Banner Stats Widgets */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="glass-panel p-5 rounded-xl flex items-center gap-4">
-          <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-lg">
+          <div className="p-3 bg-indigo-500/10 text-indigo-650 rounded-lg">
             <Mail className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-white">{senders.length}</div>
-            <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Senders</div>
+            <div className="text-2xl font-bold text-slate-900">{senders.length}</div>
+            <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Senders</div>
           </div>
         </div>
 
         <div className="glass-panel p-5 rounded-xl flex items-center gap-4">
-          <div className="p-3 bg-yellow-500/10 text-yellow-400 rounded-lg">
+          <div className="p-3 bg-yellow-500/10 text-yellow-600 rounded-lg">
             <Calendar className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-white">{scheduledEmails.length}</div>
-            <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Scheduled</div>
+            <div className="text-2xl font-bold text-slate-900">{scheduledEmails.length}</div>
+            <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Scheduled</div>
           </div>
         </div>
 
         <div className="glass-panel p-5 rounded-xl flex items-center gap-4">
-          <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg">
+          <div className="p-3 bg-emerald-500/10 text-emerald-650 rounded-lg">
             <Send className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-slate-900">
               {sentEmails.filter(e => e.status === 'SENT').length}
             </div>
-            <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium">Sent</div>
+            <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider font-medium">Sent</div>
           </div>
         </div>
 
         <div className="glass-panel p-5 rounded-xl flex items-center gap-4">
-          <div className="p-3 bg-rose-500/10 text-rose-400 rounded-lg">
+          <div className="p-3 bg-rose-500/10 text-rose-650 rounded-lg">
             <ShieldAlert className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-slate-900">
               {sentEmails.filter(e => e.status === 'FAILED').length}
             </div>
-            <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Failed</div>
+            <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Failed</div>
           </div>
         </div>
       </div>
@@ -232,12 +234,12 @@ export const DashboardPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="glass-panel p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-indigo-500/5 text-indigo-400 border border-indigo-500/10 rounded-xl">
+              <div className="p-3 bg-indigo-500/5 text-indigo-650 border border-indigo-500/10 rounded-xl">
                 <Hash className="w-7 h-7" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-white">Slack Alerts Integration</h3>
-                <p className="text-xs text-slate-400 leading-normal max-w-sm mt-0.5">
+                <h3 className="font-bold text-sm text-slate-900">Slack Alerts Integration</h3>
+                <p className="text-xs text-slate-500 leading-normal max-w-sm mt-0.5">
                   Receive a real-time Slack channel notification immediately when any sending sender reaches its hourly limit.
                 </p>
               </div>
@@ -250,13 +252,13 @@ export const DashboardPage: React.FC = () => {
               </div>
             ) : slackConnected ? (
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-705 border border-emerald-200 text-xs font-semibold">
                   <CheckCircle className="w-3.5 h-3.5" />
                   <span>Active Alerts</span>
                 </span>
                 <button
                   onClick={handleSlackDisconnect}
-                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-500/20 bg-rose-500/5 text-rose-300 hover:bg-rose-500/20 transition-all text-xs font-medium cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all text-xs font-medium cursor-pointer"
                 >
                   <Power className="w-3.5 h-3.5" />
                   <span>Disconnect</span>
@@ -283,16 +285,16 @@ export const DashboardPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Search Input */}
             <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search recipient, body, subject..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-xs rounded-lg bg-slate-900 border border-slate-800 focus:outline-none focus:border-indigo-500 transition-colors text-white"
+                className="w-full pl-9 pr-4 py-2 text-xs rounded-lg bg-white border border-slate-200 focus:outline-none focus:border-indigo-500 transition-colors text-slate-800"
               />
               {searchLoading && (
-                <Loader2 className="absolute right-3 top-2.5 w-4 h-4 text-indigo-400 animate-spin" />
+                <Loader2 className="absolute right-3 top-2.5 w-4 h-4 text-indigo-550 animate-spin" />
               )}
             </div>
 
@@ -300,15 +302,15 @@ export const DashboardPage: React.FC = () => {
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <button
                 onClick={fetchAllData}
-                className="p-2 rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 text-slate-400 hover:text-white transition-all cursor-pointer"
+                className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 transition-all cursor-pointer"
                 title="Refresh lists"
               >
-                <RefreshCw className={`w-4 h-4 ${loadingList ? 'animate-spin text-indigo-400' : ''}`} />
+                <RefreshCw className={`w-4 h-4 ${loadingList ? 'animate-spin text-indigo-550' : ''}`} />
               </button>
               
               <button
                 onClick={() => setIsComposeOpen(true)}
-                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white transition-all shadow-md shadow-indigo-600/10 cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white transition-all shadow-sm cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Compose Campaign</span>
@@ -319,12 +321,12 @@ export const DashboardPage: React.FC = () => {
           {/* Elasticsearch Search Matches Container */}
           {searchQuery.trim().length > 0 && (
             <div className="glass-panel p-6 rounded-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-900 pb-3">
-                <h3 className="font-bold text-xs text-indigo-300 uppercase tracking-wider">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <h3 className="font-bold text-xs text-indigo-650 uppercase tracking-wider">
                   🔍 Live Search Results
                 </h3>
                 {searchSource && (
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-indigo-500/20 bg-indigo-500/5 text-indigo-400">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700">
                     Source: {searchSource === 'elasticsearch' ? 'Elasticsearch Engine' : 'MySQL Database'}
                   </span>
                 )}
@@ -338,37 +340,43 @@ export const DashboardPage: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-900 text-slate-400 font-semibold">
+                      <tr className="border-b border-slate-200 text-slate-500 font-semibold bg-slate-50">
                         <th className="py-2.5 px-3">Recipient</th>
                         <th className="py-2.5 px-3">Subject</th>
                         <th className="py-2.5 px-3">Sender</th>
                         <th className="py-2.5 px-3 text-center">Status</th>
-                        <th className="py-2.5 px-3 text-right">Preview</th>
+                        <th className="py-2.5 px-3 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {searchResults.map((email) => (
-                        <tr key={email.id} className="border-b border-slate-900/60 hover:bg-slate-900/10 transition-colors">
-                          <td className="py-3 px-3 font-medium text-slate-200">{email.recipient}</td>
-                          <td className="py-3 px-3 text-slate-300">{email.subject}</td>
-                          <td className="py-3 px-3 text-slate-400 font-mono text-[11px]">{email.sender?.email || 'N/A'}</td>
+                        <tr key={email.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                          <td className="py-3 px-3 font-semibold text-slate-800">{email.recipient}</td>
+                          <td className="py-3 px-3 text-slate-650">{email.subject}</td>
+                          <td className="py-3 px-3 text-slate-500 font-mono text-[11px]">{email.sender?.email || 'N/A'}</td>
                           <td className="py-3 px-3 text-center">
                             <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${
-                              email.status === 'SENT' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                              email.status === 'FAILED' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
-                              email.status === 'RATE_LIMITED' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' :
-                              'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                              email.status === 'SENT' ? 'bg-emerald-50 text-emerald-705 border border-emerald-200' :
+                              email.status === 'FAILED' ? 'bg-rose-50 text-rose-700 border border-rose-200' :
+                              email.status === 'RATE_LIMITED' ? 'bg-purple-50 text-purple-700 border border-purple-200' :
+                              'bg-amber-50 text-amber-700 border border-amber-200'
                             }`}>
                               {email.status}
                             </span>
                           </td>
-                          <td className="py-3 px-3 text-right font-medium">
+                          <td className="py-3 px-3 text-right font-medium space-x-3">
+                            <button
+                              onClick={() => navigate(`/jobs/${email.campaignId}`)}
+                              className="text-xs font-semibold text-indigo-650 hover:text-indigo-750 transition-colors cursor-pointer"
+                            >
+                              Details
+                            </button>
                             <button
                               onClick={() => {
                                 setPreviewEmailId(email.id);
                                 setIsPreviewOpen(true);
                               }}
-                              className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 font-semibold cursor-pointer transition-colors"
+                              className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 font-semibold cursor-pointer transition-colors"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               <span>Preview</span>
@@ -386,23 +394,23 @@ export const DashboardPage: React.FC = () => {
           {/* Standard Scheduled vs Sent tabs */}
           {searchQuery.trim().length === 0 && (
             <div className="glass-panel rounded-xl overflow-hidden">
-              <div className="flex border-b border-slate-900 bg-slate-950/20">
+              <div className="flex border-b border-slate-200 bg-slate-50">
                 <button
                   onClick={() => setActiveTab('scheduled')}
-                  className={`flex-1 py-3 text-xs font-semibold text-center transition-all border-b-2 cursor-pointer ${
+                  className={`flex-1 py-3 text-xs font-bold text-center transition-all border-b-2 cursor-pointer ${
                     activeTab === 'scheduled'
-                      ? 'border-indigo-500 text-white bg-slate-900/30'
-                      : 'border-transparent text-slate-400 hover:text-slate-200'
+                      ? 'border-indigo-650 text-indigo-650 bg-white'
+                      : 'border-transparent text-slate-500 hover:text-slate-800'
                   }`}
                 >
                   Scheduled Queue ({scheduledEmails.length})
                 </button>
                 <button
                   onClick={() => setActiveTab('sent')}
-                  className={`flex-1 py-3 text-xs font-semibold text-center transition-all border-b-2 cursor-pointer ${
+                  className={`flex-1 py-3 text-xs font-bold text-center transition-all border-b-2 cursor-pointer ${
                     activeTab === 'sent'
-                      ? 'border-indigo-500 text-white bg-slate-900/30'
-                      : 'border-transparent text-slate-400 hover:text-slate-200'
+                      ? 'border-indigo-650 text-indigo-650 bg-white'
+                      : 'border-transparent text-slate-500 hover:text-slate-800'
                   }`}
                 >
                   Completed Delivery ({sentEmails.length})
@@ -426,7 +434,7 @@ export const DashboardPage: React.FC = () => {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className="border-b border-slate-900 text-slate-400 font-semibold">
+                          <tr className="border-b border-slate-200 text-slate-555 font-semibold bg-slate-50">
                             <th className="py-2.5 px-3">Recipient</th>
                             <th className="py-2.5 px-3">Subject</th>
                             <th className="py-2.5 px-3">Sender</th>
@@ -437,28 +445,34 @@ export const DashboardPage: React.FC = () => {
                         </thead>
                         <tbody>
                           {scheduledEmails.map((email) => (
-                            <tr key={email.id} className="border-b border-slate-900/60 hover:bg-slate-900/10 transition-colors">
-                              <td className="py-3.5 px-3 font-medium text-slate-200">{email.recipient}</td>
-                              <td className="py-3.5 px-3 text-slate-300 max-w-[150px] truncate">{email.subject}</td>
-                              <td className="py-3.5 px-3 text-slate-400 font-mono text-[11px]">{email.sender?.email}</td>
-                              <td className="py-3.5 px-3 text-slate-300 font-mono text-[11px]">
+                            <tr key={email.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                              <td className="py-3.5 px-3 font-semibold text-slate-805">{email.recipient}</td>
+                              <td className="py-3.5 px-3 text-slate-650 max-w-[150px] truncate">{email.subject}</td>
+                              <td className="py-3.5 px-3 text-slate-500 font-mono text-[11px]">{email.sender?.email}</td>
+                              <td className="py-3.5 px-3 text-slate-550 font-mono text-[11px]">
                                 {new Date(email.scheduledAt).toLocaleString()}
                               </td>
                               <td className="py-3.5 px-3 text-center">
                                 <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
                                   email.status === 'RATE_LIMITED' 
-                                    ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' 
+                                    ? 'bg-purple-50 text-purple-700 border border-purple-200' 
                                     : email.status === 'PROCESSING'
-                                    ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 animate-pulse'
-                                    : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                    ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 animate-pulse'
+                                    : 'bg-amber-50 text-amber-700 border border-amber-200'
                                 }`}>
                                   {email.status}
                                 </span>
                               </td>
-                              <td className="py-3.5 px-3 text-right">
+                              <td className="py-3.5 px-3 text-right font-medium space-x-3">
+                                <button
+                                  onClick={() => navigate(`/jobs/${email.campaignId}`)}
+                                  className="text-xs font-semibold text-indigo-650 hover:text-indigo-750 transition-colors cursor-pointer"
+                                >
+                                  Details
+                                </button>
                                 <button
                                   onClick={() => handleCancelEmail(email.id)}
-                                  className="text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
+                                  className="text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors cursor-pointer"
                                 >
                                   Cancel
                                 </button>
@@ -485,51 +499,57 @@ export const DashboardPage: React.FC = () => {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className="border-b border-slate-900 text-slate-400 font-semibold">
+                          <tr className="border-b border-slate-200 text-slate-555 font-semibold bg-slate-50">
                             <th className="py-2.5 px-3">Recipient</th>
                             <th className="py-2.5 px-3">Subject</th>
                             <th className="py-2.5 px-3">Sender</th>
                             <th className="py-2.5 px-3">Timestamp</th>
                             <th className="py-2.5 px-3 text-center">Status</th>
-                            <th className="py-2.5 px-3 text-right font-medium">Link</th>
+                            <th className="py-2.5 px-3 text-right font-medium">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
                           {sentEmails.map((email) => (
-                            <tr key={email.id} className="border-b border-slate-900/60 hover:bg-slate-900/10 transition-colors">
-                              <td className="py-3.5 px-3 font-medium text-slate-200">{email.recipient}</td>
-                              <td className="py-3.5 px-3 text-slate-300 max-w-[150px] truncate">{email.subject}</td>
-                              <td className="py-3.5 px-3 text-slate-400 font-mono text-[11px]">{email.sender?.email}</td>
-                              <td className="py-3.5 px-3 text-slate-400 font-mono text-[11px]">
+                            <tr key={email.id} className="border-b border-slate-200 hover:bg-slate-55 transition-colors">
+                              <td className="py-3.5 px-3 font-semibold text-slate-805">{email.recipient}</td>
+                              <td className="py-3.5 px-3 text-slate-650 max-w-[150px] truncate">{email.subject}</td>
+                              <td className="py-3.5 px-3 text-slate-500 font-mono text-[11px]">{email.sender?.email}</td>
+                              <td className="py-3.5 px-3 text-slate-500 font-mono text-[11px]">
                                 {email.sentAt ? new Date(email.sentAt).toLocaleString() : 'N/A'}
                               </td>
                               <td className="py-3.5 px-3 text-center">
                                 <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
                                   email.status === 'SENT' 
-                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                                    : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                                    : 'bg-rose-55 border border-rose-200 text-rose-700'
                                 }`}>
                                   {email.status}
                                 </span>
                               </td>
-                              <td className="py-3.5 px-3 text-right font-medium">
+                              <td className="py-3.5 px-3 text-right font-medium space-x-3">
+                                <button
+                                  onClick={() => navigate(`/jobs/${email.campaignId}`)}
+                                  className="text-xs font-semibold text-indigo-655 hover:text-indigo-750 transition-colors cursor-pointer"
+                                >
+                                  Details
+                                </button>
                                 {email.status === 'SENT' ? (
                                   <button
                                     onClick={() => {
                                       setPreviewEmailId(email.id);
                                       setIsPreviewOpen(true);
                                     }}
-                                    className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 font-semibold cursor-pointer transition-colors"
+                                    className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 font-semibold cursor-pointer transition-colors"
                                   >
                                     <span>Preview</span>
                                     <Eye className="w-3.5 h-3.5" />
                                   </button>
                                 ) : email.status === 'FAILED' ? (
-                                  <span className="text-rose-400 cursor-help font-semibold text-[10px]" title={email.errorMessage || 'Unknown Error'}>
+                                  <span className="text-rose-600 cursor-help font-semibold text-[10px]" title={email.errorMessage || 'Unknown Error'}>
                                     Error Details
                                   </span>
                                 ) : (
-                                  <span className="text-slate-600">-</span>
+                                  <span className="text-slate-400">-</span>
                                 )}
                               </td>
                             </tr>
@@ -547,26 +567,26 @@ export const DashboardPage: React.FC = () => {
 
       {/* Toast Notification */}
       {notification && (
-        <div className={`fixed top-6 right-6 z-50 flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border shadow-xl backdrop-blur-md transition-all duration-300 max-w-md animate-in fade-in slide-in-from-top-4 ${
+        <div className={`fixed top-6 right-6 z-50 flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border shadow-lg backdrop-blur-md transition-all duration-300 max-w-md animate-in fade-in slide-in-from-top-4 ${
           notification.type === 'success'
-            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
+            ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
             : notification.type === 'error'
-            ? 'bg-rose-500/10 border-rose-500/20 text-rose-300'
-            : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300'
+            ? 'bg-rose-50 border-rose-200 text-rose-700'
+            : 'bg-indigo-50 border-indigo-200 text-indigo-750'
         }`}>
           <div className="flex items-start gap-2.5">
             {notification.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
             ) : notification.type === 'error' ? (
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-605" />
             ) : (
-              <Info className="w-4 h-4 shrink-0 mt-0.5" />
+              <Info className="w-4 h-4 shrink-0 mt-0.5 text-indigo-650" />
             )}
             <span className="text-xs font-semibold leading-relaxed">{notification.message}</span>
           </div>
           <button
             onClick={() => setNotification(null)}
-            className="p-0.5 rounded text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="p-0.5 rounded text-slate-400 hover:text-slate-805 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>

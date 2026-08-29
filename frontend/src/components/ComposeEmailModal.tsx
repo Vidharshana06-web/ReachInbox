@@ -150,17 +150,17 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-2xl shadow-xl flex flex-col my-8">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-800">
+        <div className="flex items-center justify-between p-5 border-b border-slate-200">
           <div>
-            <h3 className="text-lg font-bold text-white">Compose & Schedule Campaign</h3>
-            <p className="text-xs text-slate-400">Configure parameters to schedule email jobs</p>
+            <h3 className="text-lg font-bold text-slate-900">Compose & Schedule Campaign</h3>
+            <p className="text-xs text-slate-500">Configure parameters to schedule email jobs</p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-all cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -169,7 +169,7 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
         {/* Modal Form */}
         <form onSubmit={handleScheduleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[75vh]">
           {errorMsg && (
-            <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-200 text-xs flex items-start gap-2">
+            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
@@ -177,11 +177,11 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
 
           {/* Senders drop-down */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Select Sending Account
             </label>
             {senders.length === 0 ? (
-              <div className="p-3 rounded-lg border border-yellow-500/20 bg-yellow-500/5 text-yellow-300 text-xs flex items-center gap-2">
+              <div className="p-3 rounded-lg border border-yellow-500/20 bg-yellow-500/5 text-yellow-850 text-xs flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" />
                 <span>You must add at least one Email Sender on the dashboard before scheduling!</span>
               </div>
@@ -190,7 +190,7 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
                 required
                 value={selectedSenderId}
                 onChange={(e) => setSelectedSenderId(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-white transition-all"
+                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-slate-800 transition-all"
               >
                 {senders.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -204,7 +204,7 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
           {/* Subject & Body */}
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Subject Line
               </label>
               <input
@@ -213,11 +213,11 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
                 placeholder="e.g. Catching up / ReachInbox Demo"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-white transition-all"
+                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-slate-800 transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Body Content (HTML allowed)
               </label>
               <textarea
@@ -226,19 +226,19 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
                 placeholder="Hi there! Let's connect..."
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none font-mono text-white resize-y transition-all"
+                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none font-mono text-slate-800 resize-y transition-all"
               />
             </div>
           </div>
 
           {/* File Upload Parser */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Upload Lead List (.csv or .txt)
             </label>
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="group border border-dashed border-slate-800 bg-slate-950/40 hover:bg-slate-950/70 hover:border-indigo-500/40 rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2"
+              className="group border border-dashed border-slate-350 bg-slate-50 hover:bg-slate-100 hover:border-indigo-500 rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2"
             >
               <input
                 type="file"
@@ -247,10 +247,10 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
                 accept=".csv,.txt"
                 className="hidden"
               />
-              <div className="p-3 rounded-full bg-slate-900 border border-slate-800 group-hover:border-indigo-500/20 group-hover:bg-indigo-500/5 transition-colors">
-                <Upload className="w-5 h-5 text-slate-400 group-hover:text-indigo-400" />
+              <div className="p-3 rounded-full bg-white border border-slate-200 group-hover:border-indigo-500/20 group-hover:bg-indigo-500/5 transition-colors">
+                <Upload className="w-5 h-5 text-slate-400 group-hover:text-indigo-600" />
               </div>
-              <span className="text-xs font-medium text-slate-300">
+              <span className="text-xs font-medium text-slate-700">
                 {fileName ? `Selected: ${fileName}` : 'Click to select CSV or TXT file'}
               </span>
               <span className="text-[10px] text-slate-500 font-medium">
@@ -259,14 +259,14 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
             </div>
 
             {parsedCount > 0 && (
-              <div className="mt-3 flex flex-wrap items-center justify-between p-3 rounded-lg border border-slate-800 bg-slate-950/60 text-xs gap-2">
-                <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+              <div className="mt-3 flex flex-wrap items-center justify-between p-3 rounded-lg border border-slate-200 bg-slate-50 text-xs gap-2">
+                <span className="flex items-center gap-1.5 text-emerald-600 font-bold">
                   <Check className="w-4 h-4" />
                   {parsedCount} unique emails detected
                 </span>
-                <div className="flex gap-3 text-slate-400">
+                <div className="flex gap-3 text-slate-500">
                   {localDuplicateCount > 0 && (
-                    <span className="text-indigo-400 font-medium">
+                    <span className="text-indigo-650 font-bold">
                       {localDuplicateCount} duplicate{localDuplicateCount > 1 ? 's' : ''} filtered
                     </span>
                   )}
@@ -281,9 +281,9 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
           </div>
 
           {/* Scheduling controls */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-slate-800/60">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-slate-200">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Delivery Start Time
               </label>
               <input
@@ -291,11 +291,11 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
                 required
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-white transition-all"
+                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-slate-800 transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Delay Between Emails (seconds)
               </label>
               <input
@@ -304,11 +304,11 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
                 required
                 value={delaySecs}
                 onChange={(e) => setDelaySecs(parseInt(e.target.value, 10) || 1)}
-                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-white transition-all"
+                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-slate-800 transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Hourly Sending Limit
               </label>
               <input
@@ -317,24 +317,24 @@ export const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
                 required
                 value={hourlyLimit}
                 onChange={(e) => setHourlyLimit(parseInt(e.target.value, 10) || 1)}
-                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-white transition-all"
+                className="w-full px-3 py-2 text-sm rounded-lg premium-input focus:outline-none text-slate-800 transition-all"
               />
             </div>
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-800/80">
+          <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-200">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 text-slate-300 transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || senders.length === 0 || recipients.length === 0}
-              className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-all disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
                 <>

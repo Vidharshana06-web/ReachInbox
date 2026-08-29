@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { User, EmailSender, ScheduledEmail, SlackStatus, SearchResponse } from '../types/index.js';
+import { User, EmailSender, ScheduledEmail, EmailCampaign, SlackStatus, SearchResponse } from '../types/index.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -95,6 +95,40 @@ export const slackAPI = {
 export const searchAPI = {
   search: async (q: string) => {
     const response = await api.get<SearchResponse>(`/search/emails?q=${encodeURIComponent(q)}`);
+    return response.data;
+  },
+};
+
+export const campaignsAPI = {
+  getCampaigns: async () => {
+    const response = await api.get<{ campaigns: EmailCampaign[] }>('/campaigns');
+    return response.data.campaigns;
+  },
+  getCampaignById: async (id: string) => {
+    const response = await api.get<{ campaign: EmailCampaign & { sender?: EmailSender; scheduledEmails: ScheduledEmail[] } }>(`/campaigns/${id}`);
+    return response.data.campaign;
+  },
+  deleteCampaign: async (id: string) => {
+    const response = await api.delete(`/campaigns/${id}`);
+    return response.data;
+  },
+};
+
+export const queuesAPI = {
+  getQueueStatus: async () => {
+    const response = await api.get<{ counts: any; jobs: any[] }>('/queues');
+    return response.data;
+  },
+  retryJob: async (id: string) => {
+    const response = await api.post<{ success: boolean; message: string }>(`/queues/retry/${id}`);
+    return response.data;
+  },
+  removeJob: async (id: string) => {
+    const response = await api.post<{ success: boolean; message: string }>(`/queues/remove/${id}`);
+    return response.data;
+  },
+  cleanQueue: async (status: 'completed' | 'failed') => {
+    const response = await api.post<{ success: boolean; message: string }>('/queues/clean', { status });
     return response.data;
   },
 };

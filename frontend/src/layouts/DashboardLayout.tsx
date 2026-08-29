@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.js';
-import { Mail, LogOut, ExternalLink, Loader2 } from 'lucide-react';
+import { Mail, LogOut, Loader2, ExternalLink, LayoutDashboard, Layers, Menu, Zap } from 'lucide-react';
 
 export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Collapsible sidebar state - defaults to false (hidden)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -15,88 +19,151 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-300">
-        <div className="flex flex-col items-center">
-          <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-3" />
-          <p className="text-sm font-medium">Checking authorization...</p>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-slate-600 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+        <p className="text-sm font-semibold">Validating session credentials...</p>
       </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
+
+  const isDashboardActive = location.pathname === '/dashboard' || location.pathname === '/';
+  const isJobsActive = location.pathname.startsWith('/jobs');
+  const isQueuesActive = location.pathname.startsWith('/queues');
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
-      {/* Premium Header Nav */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-900 bg-slate-950/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link to="/dashboard" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/20">
-                <Mail className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-lg text-white tracking-tight">ReachInbox</span>
-            </Link>
-            <span className="hidden sm:inline-block h-4 w-px bg-slate-800" />
-            <span className="hidden sm:inline-block text-xs font-semibold px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-              Scheduler Dashboard
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+      {/* Fixed Top Header Navbar */}
+      <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-4 sm:px-6 fixed top-0 left-0 right-0 z-40">
+        <div className="flex items-center gap-3">
+          {/* Menu Toggle Trigger */}
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+            title="Toggle Sidebar Menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {/* Premium Logo Branding */}
+          <div className="flex items-center gap-2 select-none">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-650 flex items-center justify-center text-white shadow-md shadow-blue-500/10 shrink-0">
+              <Zap className="w-4.5 h-4.5 animate-pulse" />
+            </div>
+            <span className="text-sm font-black tracking-tight text-slate-900">
+              ReachInbox <span className="font-light text-slate-500">Scheduler</span>
             </span>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4">
-            {/* Bull Board Quicklink */}
-            <a
-              href="http://localhost:5000/admin/queues"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 transition-colors text-xs font-medium text-slate-300 cursor-pointer"
-            >
-              <span>Queue Board</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-
-            {/* Profile Avatar & Metadata */}
-            <div className="flex items-center gap-3 pl-2 border-l border-slate-900">
-              <div className="text-right hidden md:block">
-                <div className="text-sm font-semibold text-white leading-tight">
-                  {user.name}
-                </div>
-                <div className="text-xs text-slate-400">
-                  {user.email}
-                </div>
-              </div>
-              
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-9 h-9 rounded-full ring-2 ring-indigo-500/20"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center font-bold text-sm text-indigo-300 ring-2 ring-indigo-500/20">
-                  {user.name.charAt(0)}
-                </div>
-              )}
-
-              <button
-                onClick={logout}
-                title="Sign Out"
-                className="p-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+        {/* User Card Actions */}
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2.5 bg-slate-50 border border-slate-200/60 p-1.5 pr-3 rounded-lg text-xs">
+            <img
+              src={user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name)}`}
+              alt="User Profile"
+              className="w-8 h-8 rounded-full border border-slate-200 bg-slate-100 select-none pointer-events-none"
+            />
+            <div className="text-left leading-tight">
+              <p className="font-semibold text-slate-800">{user.name}</p>
+              <p className="text-[9px] text-slate-500 font-mono select-all">{user.email}</p>
             </div>
           </div>
+
+          <button
+            onClick={() => {
+              logout();
+              navigate('/login');
+            }}
+            title="Log Out Profile"
+            className="p-2 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer border border-transparent hover:border-rose-100"
+          >
+            <LogOut className="w-4.5 h-4.5" />
+          </button>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+      {/* Main Layout Body wrapper */}
+      <div className="flex-1 flex pt-16 relative overflow-hidden">
+        
+        {/* Collapsible Slide-out Sidebar Drawer */}
+        <aside
+          className={`fixed md:static top-16 bottom-0 left-0 z-35 w-64 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ease-in-out transform ${
+            isSidebarOpen 
+              ? 'translate-x-0 md:ml-0' 
+              : '-translate-x-full md:-ml-64'
+          }`}
+        >
+          {/* Navigation Items */}
+          <nav className="flex-1 p-4 space-y-1.5">
+            <Link
+              to="/dashboard"
+              onClick={() => setIsSidebarOpen(false)} // close drawer on mobile when clicking links
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                isDashboardActive
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              }`}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              <span>Dashboard</span>
+            </Link>
+
+            <Link
+              to="/jobs"
+              onClick={() => setIsSidebarOpen(false)}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                isJobsActive
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              <span>Jobs</span>
+            </Link>
+
+            <Link
+              to="/queues"
+              onClick={() => setIsSidebarOpen(false)}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                isQueuesActive
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              }`}
+            >
+              <Mail className="w-4 h-4" />
+              <span>Queue Board</span>
+            </Link>
+          </nav>
+
+          {/* Profile card fallback for mobile viewports */}
+          <div className="p-4 border-t border-slate-200 flex sm:hidden items-center gap-2.5 bg-slate-50/50">
+            <img
+              src={user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name)}`}
+              alt="User Details"
+              className="w-8 h-8 rounded-full border border-slate-200 bg-slate-100"
+            />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-slate-800 truncate">{user.name}</p>
+              <p className="text-[10px] text-slate-500 font-mono truncate">{user.email}</p>
+            </div>
+          </div>
+        </aside>
+
+        {/* Semi-transparent backdrop overlay for mobile screens when sidebar drawer is open */}
+        {isSidebarOpen && (
+          <div
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-slate-900/10 backdrop-blur-sm z-20 md:hidden"
+          />
+        )}
+
+        {/* Content Pane - automatically shifts left margin on desktop when sidebar opens */}
+        <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl w-full mx-auto overflow-y-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 };

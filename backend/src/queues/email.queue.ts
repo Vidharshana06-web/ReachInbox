@@ -21,14 +21,14 @@ export const emailQueue = new Queue(emailQueueName, {
  * @param emailId The unique ID of the scheduled email in MySQL
  * @param delayMs The delay in milliseconds from now when the email should be sent
  */
-export async function addEmailToQueue(emailId: string, delayMs: number) {
+export async function addEmailToQueue(emailId: string, delayMs: number, jobId?: string) {
   // Use emailId as the BullMQ jobId to guarantee queue-level idempotency
   return await emailQueue.add(
     'send-email',
     { emailId },
     { 
       delay: delayMs > 0 ? delayMs : 0, 
-      jobId: emailId 
+      jobId: jobId || emailId 
     }
   );
 }
