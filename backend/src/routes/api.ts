@@ -4,7 +4,8 @@ import {
   redirectToGoogle,
   handleGoogleCallback,
   getMe,
-  logout
+  logout,
+  updateProfile
 } from '../controllers/auth.controller.js';
 import {
   getSenders,
@@ -42,6 +43,7 @@ router.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date
 router.get('/auth/google', redirectToGoogle);
 router.get('/auth/google/callback', handleGoogleCallback);
 router.get('/auth/me', authMiddleware as any, getMe as any);
+router.put('/auth/profile', authMiddleware as any, updateProfile as any);
 router.post('/auth/logout', logout);
 
 // Senders Routes

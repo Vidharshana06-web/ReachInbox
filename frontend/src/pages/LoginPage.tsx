@@ -54,8 +54,8 @@ export const LoginPage: React.FC = () => {
               <Zap className="w-6.5 h-6.5 text-white animate-pulse" />
             </div>
             
-            {/* Rich color text gradient branding */}
-            <h1 className="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-655 mb-1 animate-pulse">
+            {/* Rich color branding */}
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 mb-1">
               ReachInbox
             </h1>
             <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">

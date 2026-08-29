@@ -30,6 +30,10 @@ export const authAPI = {
     const response = await api.get<{ user: User; slackConnected: boolean }>('/auth/me');
     return response.data;
   },
+  updateProfile: async (data: { name: string; avatar: string }) => {
+    const response = await api.put<{ success: boolean; user: User }>('/auth/profile', data);
+    return response.data;
+  },
 };
 
 export const sendersAPI = {

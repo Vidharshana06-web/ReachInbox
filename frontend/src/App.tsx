@@ -5,6 +5,7 @@ import { LoginPage } from './pages/LoginPage.js';
 import { DashboardPage } from './pages/Dashboard.js';
 import { JobsPage } from './pages/Jobs.js';
 import { QueueBoard } from './pages/QueueBoard.js';
+import { Settings } from './pages/Settings.js';
 import { DashboardLayout } from './layouts/DashboardLayout.js';
 
 export const App: React.FC = () => {
@@ -48,6 +49,15 @@ export const App: React.FC = () => {
             element={
               <DashboardLayout>
                 <QueueBoard />
+              </DashboardLayout>
+            }
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <DashboardLayout>
+                <Settings />
               </DashboardLayout>
             }
           />

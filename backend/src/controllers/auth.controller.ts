@@ -106,3 +106,41 @@ export async function getMe(req: AuthRequest, res: Response) {
 export async function logout(req: AuthRequest, res: Response) {
   return res.json({ success: true, message: 'Logged out successfully' });
 }
+
+export async function updateProfile(req: AuthRequest, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { name, avatar } = req.body;
+
+  if (!name || name.trim() === '') {
+    return res.status(400).json({ error: 'Name field is required' });
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name: name.trim(),
+        avatar: avatar || null,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+        slackAccessToken: true,
+        slackChannelName: true,
+      }
+    });
+
+    return res.json({ 
+      success: true, 
+      message: 'Profile updated successfully.',
+      user: updatedUser 
+    });
+  } catch (error: any) {
+    console.error('Error updating user profile:', error);
+    return res.status(500).json({ error: 'Failed to update user profile.' });
+  }
+}

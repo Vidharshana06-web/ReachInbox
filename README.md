@@ -263,3 +263,24 @@ Launches the frontend server. Open your browser to `http://localhost:5173`.
 
 5. **Google & Slack Auth Integration**:
    * Fully configured secure OAuth pipelines for user account login and Slack alerting integration.
+
+---
+
+## Outputs
+A visual walkthrough of all major pages and features in ReachInbox Email Scheduler.
+
+### Login Page
+A clean, colorful login page displaying the custom `Zap` logo mark, text gradient titles, and a **Continue with Google** OAuth button.
+![Login Page](./images/login_page.png)
+
+### Dashboard — Workspace
+The main workspace containing quick metrics (Total Campaigns, Total Sent, Active Senders, Success Rate), sender configuration manager (Add Sender), and the **Compose Campaign** button.
+![Dashboard Workspace](./images/dashboard_workspace.png)
+
+### Jobs — Campaign Explorer (Split Screen)
+The split-screen explorer displaying the list of active user campaigns in a sub-sidebar on the left, and detail cards (campaign metadata, recipient tables, delay metrics, cancel buttons) on the right.
+![Jobs Explorer](./images/jobs_explorer.png)
+
+### Queue Monitor Board
+The real-time background queue dashboard displaying job counts (Active, Waiting, Delayed, Failed, Completed), cleaning actions, and a detailed jobs table syncing BullMQ details with custom MySQL recipient data.
+![Queue Monitor Board](./images/queue_monitor.png)

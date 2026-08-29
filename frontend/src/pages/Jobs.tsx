@@ -603,7 +603,7 @@ export const JobsPage: React.FC = () => {
                             href={selectedEmail.previewUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-indigo-650 hover:bg-indigo-700 font-bold text-white transition-all shadow-sm shrink-0 cursor-pointer"
+                            className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 font-bold text-white transition-all shadow-sm shrink-0 cursor-pointer"
                           >
                             <span>Ethereal Log</span>
                             <ChevronRight className="w-3.5 h-3.5" />
