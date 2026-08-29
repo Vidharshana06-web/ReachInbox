@@ -15,7 +15,7 @@ export async function searchEmails(req: AuthRequest, res: Response) {
 
   try {
     console.log(`[Search] Searching Elasticsearch for query: "${q}" (User: ${userId})`);
-    
+
     const esResponse = await esClient.search({
       index: 'emails',
       body: {
@@ -24,7 +24,7 @@ export async function searchEmails(req: AuthRequest, res: Response) {
             must: [
               { term: { userId: userId } }
             ],
-            must_dot_not: [], // empty placeholder
+            must_not: [], // empty placeholder
             should: [
               { match: { recipient: { query: q, operator: 'or', fuzziness: 'AUTO' } } },
               { match: { subject: { query: q, operator: 'or', fuzziness: 'AUTO' } } },
