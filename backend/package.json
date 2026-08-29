@@ -5,9 +5,9 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "worker": "tsx watch src/workers/email.worker.ts",
+    "worker": "node dist/workers/email.worker.js",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/start.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
