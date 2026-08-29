@@ -1,0 +1,86 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String           @id @default(uuid())
+  googleId         String           @unique
+  name             String
+  email            String           @unique
+  avatar           String?
+  slackAccessToken String?          @db.Text
+  slackChannelId   String?
+  slackChannelName String?
+  senders          EmailSender[]
+  campaigns        EmailCampaign[]
+  scheduledEmails  ScheduledEmail[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model EmailSender {
+  id              String           @id @default(uuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email           String
+  name            String
+  campaigns       EmailCampaign[]
+  scheduledEmails ScheduledEmail[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([userId])
+}
+
+model EmailCampaign {
+  id                 String           @id @default(uuid())
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  senderId           String
+  sender             EmailSender      @relation(fields: [senderId], references: [id])
+  subject            String
+  body               String           @db.Text
+  startTime          DateTime
+  delayBetweenEmails Int
+  hourlyLimit        Int
+  status             String
+  scheduledEmails    ScheduledEmail[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([senderId])
+}
+
+model ScheduledEmail {
+  id             String        @id @default(uuid())
+  campaignId     String
+  campaign       EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         EmailSender   @relation(fields: [senderId], references: [id])
+  recipient      String
+  subject        String
+  body           String        @db.Text
+  scheduledAt    DateTime
+  sentAt         DateTime?
+  status         String
+  attempts       Int           @default(0)
+  bullJobId      String?
+  idempotencyKey String        @unique
+  errorMessage   String?       @db.Text
+  previewUrl     String?       @db.Text
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([campaignId])
+  @@index([userId])
+  @@index([senderId])
+  @@index([status])
+}

@@ -1,0 +1,17 @@
+{
+  "name": "reachinbox-email-scheduler-root",
+  "version": "1.0.0",
+  "description": "ReachInbox Email Job Scheduler Root Monorepo Manager",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "db:migrate": "npm run prisma:migrate --prefix backend",
+    "db:generate": "npm run prisma:generate --prefix backend",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:worker": "npm run worker --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "test:load": "npx tsx scripts/create-test-emails.ts"
+  }
+}
