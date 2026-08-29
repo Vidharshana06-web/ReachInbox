@@ -1,11 +1,11 @@
 import { Worker, Job } from 'bullmq';
-import { redisConfig } from '../config/redis.js';
+import { getRedisConnection } from '../config/redis.js';
 import { prisma } from '../config/db.js';
 import { sendMail } from '../services/email.js';
 import { esClient } from '../config/elasticsearch.js';
 import { sendSlackRateLimitNotification } from '../integrations/slack.js';
 import { addEmailToQueue } from '../queues/email.queue.js';
-import { getRedisConnection } from '../config/redis.js';
+
 
 const redisClient = getRedisConnection();
 
@@ -229,7 +229,7 @@ export function startEmailWorker() {
       }
     },
     {
-      connection: redisConfig,
+      connection: getRedisConnection(),
       concurrency,
     }
   );
