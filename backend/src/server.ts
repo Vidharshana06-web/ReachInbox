@@ -13,7 +13,7 @@ async function bootstrap() {
     await connectElasticsearch();
 
     // Start Express HTTP Server
-    app.listen(PORT, () => {
+    app.listen(Number(PORT), "0.0.0.0", () => {
       console.log(`=========================================`);
       console.log(`REACHINBOX EXPRESS SERVER IS RUNNING`);
       console.log(`Port: ${PORT}`);
