@@ -5,10 +5,9 @@ import { sendMail } from '../services/email.js';
 import { esClient } from '../config/elasticsearch.js';
 import { sendSlackRateLimitNotification } from '../integrations/slack.js';
 import { addEmailToQueue } from '../queues/email.queue.js';
-import Redis from 'ioredis';
+import { getRedisConnection } from '../config/redis.js';
 
-// Instantiate direct Redis client for atomic Lua scripts
-const redisClient = new Redis(redisConfig);
+const redisClient = getRedisConnection();
 
 const LUA_RATE_LIMIT = `
   local current = redis.call('INCR', KEYS[1])
@@ -29,7 +28,7 @@ function getHourlyKey(date: Date): string {
 
 export function startEmailWorker() {
   const concurrency = parseInt(process.env.WORKER_CONCURRENCY || '5', 10);
-  
+
   console.log(`Starting Email Worker with concurrency: ${concurrency}`);
 
   const worker = new Worker(
@@ -80,7 +79,7 @@ export function startEmailWorker() {
       const now = new Date();
       const hourKey = getHourlyKey(now);
       const redisRateKey = `email-rate:${email.senderId}:${hourKey}`;
-      
+
       // Hourly TTL is 3960 seconds (1 hour 6 minutes) to cover the sliding window safely
       const currentRateCount = (await redisClient.eval(
         LUA_RATE_LIMIT,
@@ -93,7 +92,7 @@ export function startEmailWorker() {
 
       if (currentRateCount > hourlyLimit) {
         console.log(`[Worker] Rate limit exceeded for Sender: ${email.sender.email} (${currentRateCount}/${hourlyLimit}). Rescheduling email.`);
-        
+
         // Calculate delay to next hour
         const nextHour = new Date(
           now.getFullYear(),
@@ -124,10 +123,10 @@ export function startEmailWorker() {
         if (email.user.slackAccessToken && email.user.slackChannelId) {
           const slackNotifyKey = `slack-rate-limit-notified:${email.senderId}:${hourKey}`;
           const alreadyNotified = await redisClient.get(slackNotifyKey);
-          
+
           if (!alreadyNotified) {
             console.log(`[Worker] Posting rate limit warning to Slack for ${email.sender.email}`);
-            
+
             const nextHourStr = nextHour.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const success = await sendSlackRateLimitNotification(
               email.user.slackAccessToken,
@@ -135,7 +134,7 @@ export function startEmailWorker() {
               email.sender.email,
               nextHourStr
             );
-            
+
             if (success) {
               await redisClient.set(slackNotifyKey, 'true', 'EX', 3600); // cache for 1 hour
             }
@@ -196,7 +195,7 @@ export function startEmailWorker() {
       } else {
         // Sending failed
         console.error(`[Worker] Email sending failed for ${emailId}: ${sendResult.error}`);
-        
+
         await prisma.scheduledEmail.update({
           where: { id: emailId },
           data: {
