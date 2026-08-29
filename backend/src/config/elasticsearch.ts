@@ -1,16 +1,22 @@
 import { Client } from '@elastic/elasticsearch';
 
 const esUrl = process.env.ELASTICSEARCH_URL || 'http://localhost:9200';
+const apiKey = process.env.ELASTICSEARCH_API_KEY;
 
 export const esClient = new Client({
   node: esUrl,
+  ...(apiKey ? {
+    auth: {
+      apiKey,
+    },
+  } : {}),
 });
 
 export async function connectElasticsearch() {
   try {
     const health = await esClient.cluster.health({});
     console.log(`Successfully connected to Elasticsearch. Cluster status: ${health.status}`);
-    
+
     // Check/create emails index
     const indexExists = await esClient.indices.exists({ index: 'emails' });
     if (!indexExists) {
