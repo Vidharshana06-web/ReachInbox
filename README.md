@@ -271,7 +271,7 @@ A visual walkthrough of all major pages and features in ReachInbox Email Schedul
 
 ### Login Page
 A clean, colorful login page displaying the custom `Zap` logo mark, text gradient titles, and a **Continue with Google** OAuth button.
-![Login Page](./images/login_page(2).png)
+![Login Page](./images/login_page.png)
 
 ### Dashboard — Workspace
 The main workspace containing quick metrics (Total Campaigns, Total Sent, Active Senders, Success Rate), sender configuration manager (Add Sender), and the **Compose Campaign** button.
