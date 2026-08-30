@@ -231,6 +231,7 @@ export function startEmailWorker() {
     {
       connection: getRedisConnection(),
       concurrency,
+      lockDuration: 60000, // 60 seconds to prevent slow SMTP/HTTP timeout duplicate processing
     }
   );
 
