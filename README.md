@@ -6,6 +6,11 @@ Built as a monorepo containing a React (Vite + Tailwind CSS) frontend, an Expres
 
 ---
 
+
+Live Project: https://reachinbox-1-szr9.onrender.com/dashboard
+
+Demo Video:  https://drive.google.com/file/d/1DSSzkUFvCZQQhBqMZzt1vL-2lFjaL9Oe/view?usp=sharing
+
 ## Technical Architecture Overview
 
 The system architecture utilizes a distributed, asynchronous queue worker model to isolate the main API server from high-latency SMTP delivery operations.
